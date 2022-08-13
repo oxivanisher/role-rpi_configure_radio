@@ -1,2 +1,5 @@
 ---
-# handlers file for rpi_disable_radio
+
+- name: reboot required
+  ansible.builtin.reboot:
+    reboot_timeout: 300
