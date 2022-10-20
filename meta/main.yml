@@ -2,6 +2,7 @@
 
 galaxy_info:
   role_name: rpi_disable_radio
+  namespace: oxivanisher
   author: Marc Urben
   description: Please fill me out at some point in time
   company: Thunderbluff
