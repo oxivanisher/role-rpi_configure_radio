@@ -1,6 +1,6 @@
 ---
 # ensure mounted boot
-- name: mount boot
+- name: Mount boot
   ansible.posix.mount:
     path: /boot
     state: mounted
@@ -13,7 +13,7 @@
     path: /boot/config.txt
     regexp: "dtoverlay=disable-wifi"
     line: "dtoverlay=disable-wifi"
-  notify: reboot required
+  notify: Reboot required
   when: rpi_disable_radio_wifi
   ignore_errors: "{{ ansible_check_mode }}"
 
@@ -22,7 +22,7 @@
     path: /boot/config.txt
     regexp: "dtoverlay=disable-wifi"
     line: "#dtoverlay=disable-wifi"
-  notify: reboot required
+  notify: Reboot required
   when: not rpi_disable_radio_wifi
   ignore_errors: "{{ ansible_check_mode }}"
 
@@ -31,7 +31,7 @@
     path: /boot/config.txt
     regexp: "dtoverlay=disable-bt"
     line: "dtoverlay=disable-bt"
-  notify: reboot required
+  notify: Reboot required
   when: rpi_disable_radio_bt
   ignore_errors: "{{ ansible_check_mode }}"
 
@@ -40,7 +40,7 @@
     path: /boot/config.txt
     regexp: "dtoverlay=disable-bt"
     line: "#dtoverlay=disable-bt"
-  notify: reboot required
+  notify: Reboot required
   when: not rpi_disable_radio_bt
   ignore_errors: "{{ ansible_check_mode }}"
 

@@ -1,5 +1,4 @@
 ---
-
-- name: reboot required
+- name: Reboot required
   ansible.builtin.reboot:
     reboot_timeout: 300
