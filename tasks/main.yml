@@ -64,6 +64,7 @@
     name: wifi_powersave@off.service
     state: started
     enabled: true
+    daemon_reload: true
   when: not rpi_configure_radio_disable_wifi
   ignore_errors: "{{ ansible_check_mode }}"
 
@@ -71,5 +72,6 @@
   ansible.builtin.service:
     name: wifi_powersave@off.service
     enabled: false
+    daemon_reload: true
   when: rpi_configure_radio_disable_wifi
   ignore_errors: "{{ ansible_check_mode }}"
