@@ -14,7 +14,7 @@
     regexp: "dtoverlay=disable-wifi"
     line: "dtoverlay=disable-wifi"
   notify: Reboot required
-  when: rpi_disable_radio_wifi
+  when: rpi_configure_radio_wifi
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: "Enable wifi in /boot/config.txt"
@@ -23,7 +23,7 @@
     regexp: "dtoverlay=disable-wifi"
     line: "#dtoverlay=disable-wifi"
   notify: Reboot required
-  when: not rpi_disable_radio_wifi
+  when: not rpi_configure_radio_wifi
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: "Disable bluetooth in /boot/config.txt"
@@ -32,7 +32,7 @@
     regexp: "dtoverlay=disable-bt"
     line: "dtoverlay=disable-bt"
   notify: Reboot required
-  when: rpi_disable_radio_bt
+  when: rpi_configure_radio_bt
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: "Enable bluetooth in /boot/config.txt"
@@ -41,7 +41,7 @@
     regexp: "dtoverlay=disable-bt"
     line: "#dtoverlay=disable-bt"
   notify: Reboot required
-  when: not rpi_disable_radio_bt
+  when: not rpi_configure_radio_bt
   ignore_errors: "{{ ansible_check_mode }}"
 
 # Inspired by https://github.com/guysoft/OctoPi/issues/508
@@ -57,17 +57,17 @@
     owner: root
     group: root
     mode: "0644"
-  when: not rpi_disable_radio_wifi
+  when: not rpi_configure_radio_wifi
 
 - name: Enable the systemd unit to handle wifi powersave
   ansible.builtin.service:
     name: wifi_powersave@off.service
     state: started
     enabled: true
-  when: not rpi_disable_radio_wifi
+  when: not rpi_configure_radio_wifi
 
 - name: Disable the systemd unit to handle wifi powersave
   ansible.builtin.service:
     name: wifi_powersave@off.service
     enabled: false
-  when: rpi_disable_radio_wifi
+  when: rpi_configure_radio_wifi

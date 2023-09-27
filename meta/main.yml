@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: rpi_disable_radio
+  role_name: rpi_configure_radio
   namespace: oxivanisher
   author: Marc Urben
   description: Please fill me out at some point in time
