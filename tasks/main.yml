@@ -51,7 +51,7 @@
     state: absent
 
 - name: Create systemd unit to handle wifi powersave
-  ansible.builtin.file:
+  ansible.builtin.copy:
     src: wifi_powersave@.service
     dest: /etc/systemd/system/wifi_powersave@.service
     owner: root
