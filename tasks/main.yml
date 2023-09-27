@@ -65,9 +65,11 @@
     state: started
     enabled: true
   when: not rpi_configure_radio_wifi
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Disable the systemd unit to handle wifi powersave
   ansible.builtin.service:
     name: wifi_powersave@off.service
     enabled: false
   when: rpi_configure_radio_wifi
+  ignore_errors: "{{ ansible_check_mode }}"
