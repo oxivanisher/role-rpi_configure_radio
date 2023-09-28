@@ -57,7 +57,6 @@
     owner: root
     group: root
     mode: "0644"
-  when: not rpi_configure_radio_disable_wifi
 
 - name: Enable the systemd unit to handle wifi powersave
   ansible.builtin.service:
