@@ -50,27 +50,46 @@
     path: /etc/network/if-up.d/powersave_off
     state: absent
 
-- name: Create systemd unit to handle wifi powersave
-  ansible.builtin.copy:
-    src: wifi_powersave@.service
-    dest: /etc/systemd/system/wifi_powersave@.service
-    owner: root
-    group: root
-    mode: "0644"
+- name: Configure wifi before bookworm
+  when: ansible_distribution_major_version | int < 12
+  block:
+    - name: Create systemd unit to handle wifi powersave
+      ansible.builtin.copy:
+        src: wifi_powersave@.service
+        dest: /etc/systemd/system/wifi_powersave@.service
+        owner: root
+        group: root
+        mode: "0644"
 
-- name: Enable the systemd unit to handle wifi powersave
-  ansible.builtin.service:
-    name: wifi_powersave@off.service
-    state: started
-    enabled: true
-    daemon_reload: true
-  when: not rpi_configure_radio_disable_wifi
-  ignore_errors: "{{ ansible_check_mode }}"
+    - name: Enable the systemd unit to handle wifi powersave
+      ansible.builtin.service:
+        name: wifi_powersave@off.service
+        state: started
+        enabled: true
+        daemon_reload: true
+      when: not rpi_configure_radio_disable_wifi
+      ignore_errors: "{{ ansible_check_mode }}"
 
-- name: Disable the systemd unit to handle wifi powersave
-  ansible.builtin.service:
-    name: wifi_powersave@off.service
-    enabled: false
-    daemon_reload: true
-  when: rpi_configure_radio_disable_wifi
-  ignore_errors: "{{ ansible_check_mode }}"
+    - name: Disable the systemd unit to handle wifi powersave
+      ansible.builtin.service:
+        name: wifi_powersave@off.service
+        enabled: false
+        daemon_reload: true
+      when: rpi_configure_radio_disable_wifi
+      ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Configure wifi starting from bookworm (NetworkManager)
+  when: ansible_distribution_major_version | int >= 12
+  block:
+    - name: Gather facts about running services
+      ansible.builtin.service_facts:
+
+    - name: Create NetworkManager file to configure wifi.powersave
+      ansible.builtin.copy:
+        src: default-wifi-powersave.conf
+        dest: /etc/NetworkManager/conf.d/default-wifi-powersave.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart NetworkManager
+      when: "ansible_facts.services['NetworkManager.service']['state'] == 'running'"

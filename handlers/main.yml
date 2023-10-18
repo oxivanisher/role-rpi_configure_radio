@@ -2,3 +2,8 @@
 - name: Reboot required
   ansible.builtin.reboot:
     reboot_timeout: 300
+
+- name: Restart NetworkManager
+  ansible.builtin.service:
+    name: NetworkManager
+    state: restarted
