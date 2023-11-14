@@ -1,43 +1,48 @@
 ---
 # ensure mounted boot
+- name: Override config.txt location for Raspberry Pi OS version before bookworm
+  ansible.builtin.set_fact:
+    rpi_configure_radio_config_dir: /boot
+  when: ansible_distribution_major_version | int < 12
+
 - name: Mount boot
   ansible.posix.mount:
-    path: /boot
+    path: "{{ rpi_configure_radio_config_dir }}"
     state: mounted
     src: /dev/mmcblk0p1
     fstype: vfat
   changed_when: false
 
-- name: "Disable wifi in /boot/config.txt"
+- name: "Disable wifi in config.txt"
   ansible.builtin.lineinfile:
-    path: /boot/config.txt
+    path: "{{ rpi_configure_radio_config_dir }}/config.txt"
     regexp: "dtoverlay=disable-wifi"
     line: "dtoverlay=disable-wifi"
   notify: Reboot required
   when: rpi_configure_radio_disable_wifi
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: "Enable wifi in /boot/config.txt"
+- name: "Enable wifi in config.txt"
   ansible.builtin.lineinfile:
-    path: /boot/config.txt
+    path: "{{ rpi_configure_radio_config_dir }}/config.txt"
     regexp: "dtoverlay=disable-wifi"
     line: "#dtoverlay=disable-wifi"
   notify: Reboot required
   when: not rpi_configure_radio_disable_wifi
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: "Disable bluetooth in /boot/config.txt"
+- name: "Disable bluetooth in config.txt"
   ansible.builtin.lineinfile:
-    path: /boot/config.txt
+    path: "{{ rpi_configure_radio_config_dir }}/config.txt"
     regexp: "dtoverlay=disable-bt"
     line: "dtoverlay=disable-bt"
   notify: Reboot required
   when: rpi_configure_radio_disable_bt
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: "Enable bluetooth in /boot/config.txt"
+- name: "Enable bluetooth in config.txt"
   ansible.builtin.lineinfile:
-    path: /boot/config.txt
+    path: "{{ rpi_configure_radio_config_dir }}/config.txt"
     regexp: "dtoverlay=disable-bt"
     line: "#dtoverlay=disable-bt"
   notify: Reboot required
