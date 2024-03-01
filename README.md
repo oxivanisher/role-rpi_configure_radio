@@ -12,6 +12,7 @@ Role Variables
 |----------------------------------|-------------------------------------------|---------------|
 | rpi_configure_radio_disable_wifi | Should the wifi adapter be disabled?      | `false`          |
 | rpi_configure_radio_disable_bt   | Should the bluetooth adapter be disabled? | `false`          |
+| raspberry_pi_boot_dev | Raspberry pi boot dev (used for editing config.txt) | /dev/mmcblk0p1 |
 
 Example Playbook
 ----------------
