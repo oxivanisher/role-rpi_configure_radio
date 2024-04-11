@@ -12,6 +12,8 @@
     src: "{{ raspberry_pi_boot_dev }}"
     fstype: vfat
   changed_when: false
+  become: true
+  become_user: root
 
 - name: "Disable wifi in config.txt"
   ansible.builtin.lineinfile:
@@ -21,6 +23,8 @@
   notify: Reboot required
   when: rpi_configure_radio_disable_wifi
   ignore_errors: "{{ ansible_check_mode }}"
+  become: true
+  become_user: root
 
 - name: "Enable wifi in config.txt"
   ansible.builtin.lineinfile:
@@ -30,6 +34,8 @@
   notify: Reboot required
   when: not rpi_configure_radio_disable_wifi
   ignore_errors: "{{ ansible_check_mode }}"
+  become: true
+  become_user: root
 
 - name: "Disable bluetooth in config.txt"
   ansible.builtin.lineinfile:
@@ -39,6 +45,8 @@
   notify: Reboot required
   when: rpi_configure_radio_disable_bt
   ignore_errors: "{{ ansible_check_mode }}"
+  become: true
+  become_user: root
 
 - name: "Enable bluetooth in config.txt"
   ansible.builtin.lineinfile:
@@ -48,12 +56,16 @@
   notify: Reboot required
   when: not rpi_configure_radio_disable_bt
   ignore_errors: "{{ ansible_check_mode }}"
+  become: true
+  become_user: root
 
 # Inspired by https://github.com/guysoft/OctoPi/issues/508
 - name: Remove buggy wlan0 powersave file from octopi
   ansible.builtin.file:
     path: /etc/network/if-up.d/powersave_off
     state: absent
+  become: true
+  become_user: root
 
 - name: Configure wifi before bookworm
   when: ansible_distribution_major_version | int < 12
@@ -65,6 +77,8 @@
         owner: root
         group: root
         mode: "0644"
+      become: true
+      become_user: root
 
     - name: Enable the systemd unit to handle wifi powersave
       ansible.builtin.service:
@@ -74,6 +88,8 @@
         daemon_reload: true
       when: not rpi_configure_radio_disable_wifi
       ignore_errors: "{{ ansible_check_mode }}"
+      become: true
+      become_user: root
 
     - name: Disable the systemd unit to handle wifi powersave
       ansible.builtin.service:
@@ -82,6 +98,8 @@
         daemon_reload: true
       when: rpi_configure_radio_disable_wifi
       ignore_errors: "{{ ansible_check_mode }}"
+      become: true
+      become_user: root
 
 - name: Configure wifi starting from bookworm (NetworkManager)
   when: ansible_distribution_major_version | int >= 12
@@ -98,3 +116,5 @@
         mode: "0644"
       notify: Restart NetworkManager
       when: "ansible_facts.services['NetworkManager.service']['state'] == 'running'"
+      become: true
+      become_user: root
