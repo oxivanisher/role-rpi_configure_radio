@@ -1,5 +1,6 @@
 rpi_configure_radio
 ===================
+[![Ansible Lint](https://github.com/oxivanisher/role-rpi_configure_radio/actions/workflows/ansible-lint.yml/badge.svg)](https://github.com/oxivanisher/role-rpi_configure_radio/actions/workflows/ansible-lint.yml)
 
 Enable or disable the wifi and bluetooth adapter. Also disable wifi powersave for wifi enabled devices.
 
