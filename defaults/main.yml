@@ -1,4 +1,4 @@
 ---
 rpi_configure_radio_disable_wifi: false
 rpi_configure_radio_disable_bt: false
-raspberry_pi_boot_dev: /dev/mmcblk0p1
+rpi_configure_radio_rpi_boot_dev: /dev/mmcblk0p1
