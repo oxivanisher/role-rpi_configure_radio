@@ -26,7 +26,7 @@
     regexp: "dtoverlay=disable-wifi"
     line: "dtoverlay=disable-wifi"
   notify: Reboot required
-  when: rpi_configure_radio_disable_wifi
+  when: rpi_configure_radio_disable_wifi | bool
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
   become_user: root
@@ -37,7 +37,7 @@
     regexp: "dtoverlay=disable-wifi"
     line: "#dtoverlay=disable-wifi"
   notify: Reboot required
-  when: not rpi_configure_radio_disable_wifi
+  when: not rpi_configure_radio_disable_wifi | bool
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
   become_user: root
@@ -48,7 +48,7 @@
     regexp: "dtoverlay=disable-bt"
     line: "dtoverlay=disable-bt"
   notify: Reboot required
-  when: rpi_configure_radio_disable_bt
+  when: rpi_configure_radio_disable_bt | bool
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
   become_user: root
@@ -59,7 +59,7 @@
     regexp: "dtoverlay=disable-bt"
     line: "#dtoverlay=disable-bt"
   notify: Reboot required
-  when: not rpi_configure_radio_disable_bt
+  when: not rpi_configure_radio_disable_bt | bool
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
   become_user: root
@@ -91,7 +91,7 @@
         state: started
         enabled: true
         daemon_reload: true
-      when: not rpi_configure_radio_disable_wifi
+      when: not rpi_configure_radio_disable_wifi | bool
       ignore_errors: "{{ ansible_check_mode }}"
       become: true
       become_user: root
@@ -101,7 +101,7 @@
         name: wifi_powersave@off.service
         enabled: false
         daemon_reload: true
-      when: rpi_configure_radio_disable_wifi
+      when: rpi_configure_radio_disable_wifi | bool
       ignore_errors: "{{ ansible_check_mode }}"
       become: true
       become_user: root
