@@ -3,7 +3,7 @@ galaxy_info:
   role_name: rpi_configure_radio
   namespace: oxivanisher
   author: Marc Urben
-  description: Please fill me out at some point in time
+  description: Enable or disable Raspberry Pi bluetooth and wifi
   company: Thunderbluff
 
   # If the issue tracker for your role is not on github, uncomment the
