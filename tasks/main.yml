@@ -3,7 +3,7 @@
 - name: Override config.txt location for Raspberry Pi OS version before bookworm
   ansible.builtin.set_fact:
     rpi_configure_radio_config_dir: /boot
-  when: ansible_distribution_major_version | int < 12
+  when: ansible_facts.distribution_major_version | int < 12
 
 - name: Override Raspberry PI boot device default since raspberry_pi_boot_dev is set
   ansible.builtin.set_fact:
@@ -73,7 +73,7 @@
   become_user: root
 
 - name: Configure wifi before bookworm
-  when: ansible_distribution_major_version | int < 12
+  when: ansible_facts.distribution_major_version | int < 12
   block:
     - name: Create systemd unit to handle wifi powersave
       ansible.builtin.copy:
@@ -107,7 +107,7 @@
       become_user: root
 
 - name: Configure wifi starting from bookworm (NetworkManager)
-  when: ansible_distribution_major_version | int >= 12
+  when: ansible_facts.distribution_major_version | int >= 12
   block:
     - name: Gather facts about running services
       ansible.builtin.service_facts:
