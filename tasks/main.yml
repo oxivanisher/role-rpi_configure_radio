@@ -20,7 +20,29 @@
   become: true
   become_user: root
 
-- name: "Disable wifi in config.txt"
+- name: Ensure rfkill is available
+  ansible.builtin.package:
+    name: rfkill
+    state: present
+  become: true
+  become_user: root
+
+- name: Get rfkill status
+  ansible.builtin.command:
+    argv:
+      - /usr/sbin/rfkill
+      - --json
+  register: rpi_configure_radio_rfkill_status
+  changed_when: false
+  become: true
+  become_user: root
+
+- name: Parse rfkill status
+  ansible.builtin.set_fact:
+    rpi_configure_radio_rfkill_devices: "{{ (rpi_configure_radio_rfkill_status.stdout | from_json).get('', []) }}"
+  changed_when: false
+
+- name: Disable wifi in config.txt
   ansible.builtin.lineinfile:
     path: "{{ rpi_configure_radio_config_dir }}/config.txt"
     regexp: "dtoverlay=disable-wifi"
@@ -31,7 +53,7 @@
   become: true
   become_user: root
 
-- name: "Enable wifi in config.txt"
+- name: Enable wifi in config.txt
   ansible.builtin.lineinfile:
     path: "{{ rpi_configure_radio_config_dir }}/config.txt"
     regexp: "dtoverlay=disable-wifi"
@@ -42,7 +64,20 @@
   become: true
   become_user: root
 
-- name: "Disable bluetooth in config.txt"
+- name: Unblock wifi if soft blocked by rfkill
+  ansible.builtin.command:
+    argv:
+      - /usr/sbin/rfkill
+      - unblock
+      - wifi
+  when:
+    - not rpi_configure_radio_disable_wifi | bool
+    - rpi_configure_radio_rfkill_devices | selectattr('type', 'equalto', 'wlan') | selectattr('soft', 'equalto', 'blocked') | list | length > 0
+  changed_when: true
+  become: true
+  become_user: root
+
+- name: Disable bluetooth in config.txt
   ansible.builtin.lineinfile:
     path: "{{ rpi_configure_radio_config_dir }}/config.txt"
     regexp: "dtoverlay=disable-bt"
@@ -53,7 +88,7 @@
   become: true
   become_user: root
 
-- name: "Enable bluetooth in config.txt"
+- name: Enable bluetooth in config.txt
   ansible.builtin.lineinfile:
     path: "{{ rpi_configure_radio_config_dir }}/config.txt"
     regexp: "dtoverlay=disable-bt"
@@ -61,6 +96,19 @@
   notify: Reboot required
   when: not rpi_configure_radio_disable_bt | bool
   ignore_errors: "{{ ansible_check_mode }}"
+  become: true
+  become_user: root
+
+- name: Unblock bluetooth if soft blocked by rfkill
+  ansible.builtin.command:
+    argv:
+      - /usr/sbin/rfkill
+      - unblock
+      - bluetooth
+  when:
+    - not rpi_configure_radio_disable_bt | bool
+    - rpi_configure_radio_rfkill_devices | selectattr('type', 'equalto', 'bluetooth') | selectattr('soft', 'equalto', 'blocked') | list | length > 0
+  changed_when: true
   become: true
   become_user: root
 
