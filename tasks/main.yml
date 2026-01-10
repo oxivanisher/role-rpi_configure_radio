@@ -39,7 +39,7 @@
 
 - name: Parse rfkill status
   ansible.builtin.set_fact:
-    rpi_configure_radio_rfkill_devices: "{{ (rpi_configure_radio_rfkill_status.stdout | from_json).get('', []) }}"
+    rpi_configure_radio_rfkill_devices: "{{ (rpi_configure_radio_rfkill_status.stdout | from_json).rfkilldevices }}"
   changed_when: false
 
 - name: Disable wifi in config.txt
