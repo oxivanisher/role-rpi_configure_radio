@@ -18,14 +18,12 @@
     fstype: vfat
   changed_when: false
   become: true
-  become_user: root
 
 - name: Ensure rfkill is available
   ansible.builtin.package:
     name: rfkill
     state: present
   become: true
-  become_user: root
 
 - name: Get rfkill status
   ansible.builtin.command:
@@ -36,7 +34,6 @@
   check_mode: false
   changed_when: false
   become: true
-  become_user: root
 
 - name: Parse rfkill status
   ansible.builtin.set_fact:
@@ -52,7 +49,6 @@
   when: rpi_configure_radio_disable_wifi | bool
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
-  become_user: root
 
 - name: Enable wifi in config.txt
   ansible.builtin.lineinfile:
@@ -63,7 +59,6 @@
   when: not rpi_configure_radio_disable_wifi | bool
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
-  become_user: root
 
 - name: Unblock wifi if soft blocked by rfkill
   ansible.builtin.command:
@@ -76,7 +71,6 @@
     - rpi_configure_radio_rfkill_devices | selectattr('type', 'equalto', 'wlan') | selectattr('soft', 'equalto', 'blocked') | list | length > 0
   changed_when: true
   become: true
-  become_user: root
 
 - name: Disable bluetooth in config.txt
   ansible.builtin.lineinfile:
@@ -87,7 +81,6 @@
   when: rpi_configure_radio_disable_bt | bool
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
-  become_user: root
 
 - name: Enable bluetooth in config.txt
   ansible.builtin.lineinfile:
@@ -98,7 +91,6 @@
   when: not rpi_configure_radio_disable_bt | bool
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
-  become_user: root
 
 - name: Unblock bluetooth if soft blocked by rfkill
   ansible.builtin.command:
@@ -111,7 +103,6 @@
     - rpi_configure_radio_rfkill_devices | selectattr('type', 'equalto', 'bluetooth') | selectattr('soft', 'equalto', 'blocked') | list | length > 0
   changed_when: true
   become: true
-  become_user: root
 
 # Inspired by https://github.com/guysoft/OctoPi/issues/508
 - name: Remove buggy wlan0 powersave file from octopi
@@ -119,7 +110,6 @@
     path: /etc/network/if-up.d/powersave_off
     state: absent
   become: true
-  become_user: root
 
 - name: Configure wifi before bookworm
   when: ansible_facts.distribution_major_version | int < 12
@@ -132,10 +122,9 @@
         group: root
         mode: "0644"
       become: true
-      become_user: root
 
     - name: Enable the systemd unit to handle wifi powersave
-      ansible.builtin.service:
+      ansible.builtin.systemd_service:
         name: wifi_powersave@off.service
         state: started
         enabled: true
@@ -143,17 +132,15 @@
       when: not rpi_configure_radio_disable_wifi | bool
       ignore_errors: "{{ ansible_check_mode }}"
       become: true
-      become_user: root
 
     - name: Disable the systemd unit to handle wifi powersave
-      ansible.builtin.service:
+      ansible.builtin.systemd_service:
         name: wifi_powersave@off.service
         enabled: false
         daemon_reload: true
       when: rpi_configure_radio_disable_wifi | bool
       ignore_errors: "{{ ansible_check_mode }}"
       become: true
-      become_user: root
 
 - name: Configure wifi starting from bookworm (NetworkManager)
   when: ansible_facts.distribution_major_version | int >= 12
@@ -171,4 +158,3 @@
       notify: Restart NetworkManager
       when: "ansible_facts.services['NetworkManager.service']['state'] == 'running'"
       become: true
-      become_user: root

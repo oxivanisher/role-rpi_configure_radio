@@ -3,11 +3,9 @@
   ansible.builtin.reboot:
     reboot_timeout: 300
   become: true
-  become_user: root
 
 - name: Restart NetworkManager
   ansible.builtin.service:
     name: NetworkManager
     state: restarted
   become: true
-  become_user: root
