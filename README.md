@@ -13,7 +13,6 @@ Role Variables
 | -------------------------------- | --------------------------------------------------------------------------------------------------------- | ---------------- |
 | rpi_configure_radio_disable_wifi | Should the wifi adapter be disabled?                                                                      | `false`          |
 | rpi_configure_radio_disable_bt   | Should the bluetooth adapter be disabled?                                                                 | `false`          |
-| rpi_configure_radio_rpi_boot_dev | The boot device where the `config.txt` is located. Will be overwritten if `raspberry_pi_boot_dev` is set! | `/dev/mmcblk0p1` |
 
 Example Playbook
 ----------------
